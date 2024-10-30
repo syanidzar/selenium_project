@@ -1,0 +1,9 @@
+<option value="5">Pentadbir Agensi</option>
+<option value="6">Super Administrator</option>
+<option value="12">Test Staf</option>
+<option value="13" selected="selected">Staf</option>
+<option value="14">Penyelia</option>
+<option value="17">Ketua Jabatan</option>
+<option value="18">Setiausaha Tetap</option>
+<option value="19">Penyelaras Kursus/Pe</option>
+<option value="25">Ketua Bahagian</option>
