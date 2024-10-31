@@ -1,118 +1,154 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.support import expected_conditions as EC
-import time
+import random
+from datetime import datetime, timedelta
 import csv
-from pynput import keyboard  # Import pynput for keyboard input
+import time
 
-# Configuration
-USER_INFO_FILE_LOCATION = './script.python/files/generated.pengguna.csv'
-GECKODRIVER_PATH = '/snap/bin/geckodriver'
-LOGIN_URL = 'http://localhost/mtalent/latih/index.php/login/check_login_web'
-FORM_URL = 'http://localhost/mtalent/latih/index.php/admin/register'
-USERNAME = 'superadmin@test.com'
-PASSWORD = '123456'
+# Define file paths
+csv_file_location = 'files/generated.pengguna.Bahagian_Istiadat_dan_Protokol.csv'
+csv_file_lists_of_pengguna = 'files/generated.pengguna.csv'
+malay_names_male_file = 'files/names/malay.male'
+malay_names_female_file = 'files/names/malay.female'
+chinese_names_male_file = 'files/names/chinese.male'
+chinese_names_female_file = 'files/names/chinese.female'
+chinese_surnames_file = 'files/names/chinese.surname'
+indian_names_male_file = 'files/names/indian.male'
+indian_names_female_file = 'files/names/indian.female'
+indian_surnames_file = 'files/names/indian.surname'
+lists_of_agencies = 'files/options/agencies'
+lists_of_positions = 'files/options/positions'
+lists_of_grades = 'files/options/grades'
+lists_of_schemes = 'files/options/schemes'
 
-# Initialize the WebDriver
-def init_driver():
-    driver_service = webdriver.FirefoxService(executable_path=GECKODRIVER_PATH)
-    return webdriver.Firefox(service=driver_service)
+def set_read_list(which_lists):
+    with open(which_lists, 'r') as file:
+        pick_from_list = file.readlines()
+        return random.choice(pick_from_list).strip()
 
-# Login function
-def login(driver):
-    driver.get(LOGIN_URL)
-    wait = WebDriverWait(driver, 10)
+def generate_random_dob():
+    start_date = datetime.now() - timedelta(days=31*365)
+    end_date = datetime.now() - timedelta(days=21*365)
+    random_dob = start_date + (end_date - start_date) * random.random()
+    return random_dob
 
-    username_input = wait.until(EC.presence_of_element_located((By.NAME, 'username')))
-    password_input = wait.until(EC.presence_of_element_located((By.NAME, 'password')))
+def generate_kad_pengenalan():
+    dob = generate_random_dob()
+    dob_str = dob.strftime('%y%m%d')
+    state_num = random.randint(1, 14)
+    kad_pengenalan = f"{dob_str}{state_num:02d}{random.randint(0, 9999):04d}"
+    return kad_pengenalan
+
+def set_gender():
+    return random.choice(['male', 'female'])
+
+def set_ethnicity():
+    return random.choice(['malay', 'chinese', 'indian'])
+
+def read_name_from_file(which_file):
+    with open(which_file, 'r') as file:
+        lines = file.readlines()
+        return random.choice(lines).strip()
+
+def generate_name(ethnicity, gender):
+    match ethnicity:
+        case 'malay':
+            if gender == 'male':
+                first_name = read_name_from_file(malay_names_male_file)
+                onoma = 'bin'
+            else:
+                first_name = read_name_from_file(malay_names_female_file)
+                onoma = 'binti'
+            surname = f'{onoma} {read_name_from_file(malay_names_male_file)}'
+        case 'chinese':
+            if gender == 'male':
+                first_name = read_name_from_file(chinese_names_male_file)
+            else:
+                first_name = read_name_from_file(chinese_names_female_file)
+            surname = read_name_from_file(chinese_surnames_file)
+        case 'indian':
+            if gender == 'male':
+                first_name = read_name_from_file(indian_names_male_file)
+            else:
+                first_name = read_name_from_file(indian_names_female_file)
+            surname = read_name_from_file(indian_surnames_file)
+    return f'{first_name} {surname}', ethnicity, gender
+
+def set_roles(total_users):
+    roles = {
+        'Pentadbir Agensi': 1,
+        'Penyelia': 1,
+        'Ketua Jabatan': 1,
+        'Setiausaha Tetap': 1,
+        'Penyelaras Kursus/Pe': 1,
+        'Ketua Bahagian': 1,
+        'Staf': total_users - 6  # Remaining users will be Staf
+    }
+    assigned_roles = []
+    # Assign fixed roles first
+    for role, count in roles.items():
+        assigned_roles.extend([role] * count)
+    return assigned_roles
+
+def set_status():
+    return 'enabled'
+
+if __name__ == '__main__':
+    start_time = time.time()  # Start time
+    total_users = 10  # Total number of users to generate
+    n = 1
+    set_of_ic = set()
     
-    username_input.send_keys(USERNAME)
-    password_input.send_keys(PASSWORD)
-    
-    login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'btn-primary')))
-    login_button.click()
-    
-    print('Login Successful')
-
-# Fill form function
-def fill_form(driver, user_data):
-    wait = WebDriverWait(driver, 10)
-
-    try:
-        # Fill in text fields
-        fill_ic = wait.until(EC.presence_of_element_located((By.NAME, 'user_username')))
-        fill_password = wait.until(EC.presence_of_element_located((By.NAME, 'user_password')))
-        fill_repassword = wait.until(EC.presence_of_element_located((By.NAME, 'user_repassword')))
-        fill_nama = wait.until(EC.presence_of_element_located((By.NAME, 'user_profile_name')))
-        fill_email = wait.until(EC.presence_of_element_located((By.NAME, 'user_profile_email')))
-        fill_jawatan = wait.until(EC.presence_of_element_located((By.NAME, 'user_profile_jawatan')))
-
-        # Fill in dropdown fields
-        fill_role = wait.until(EC.presence_of_element_located((By.NAME, 'user_cizacl_role_id')))
-        select_role = Select(fill_role)
-        select_role.select_by_visible_text(f'{user_data[2]}')
-
-        # Fill in remaining fields
-        fill_ic.send_keys(user_data[0])
-        fill_password.send_keys(user_data[1])
-        fill_repassword.send_keys(user_data[1])
-        fill_nama.send_keys(user_data[4])
-        fill_email.send_keys(user_data[6])
-        fill_jawatan.send_keys(user_data[7])
-
-
-        # Submit or reset the form
-        # reset_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'btn-light')))
-        # reset_button.click()
-
-        print(f"Form filled for: {user_data[4]}")
-    except Exception as e:
-        print(f"Error filling form for {user_data[4]}: {e}")
-
-# Function to wait for key combination
-def wait_for_f1_key():
-    print("Press 'F1' to fill the next form...")
-    
-    # Function to detect F1 key press
-    def on_press(key):
-        try:
-            if key == keyboard.Key.f1:  # Check if the pressed key is F1
-                print("F1 key pressed!")  # Confirm key press
-                return False  # Stop listener
-        except AttributeError:
-            pass
-
-    # Collect events until F1 is pressed
-    with keyboard.Listener(on_press=on_press) as listener:
-        listener.join()
-
-    print("F1 key detected, proceeding...")
-
-# Main execution flow
-def main():
-    driver = init_driver()
-    login(driver)
-
-    with open(USER_INFO_FILE_LOCATION, 'r') as file:
-        rows = csv.reader(file)
-        next(rows)  # Skip header
-
-        driver.get(FORM_URL)
-
-        for user_data in rows:
+    with open(csv_file_location, 'w', newline='', encoding='utf-8') as file_write, \
+         open(csv_file_lists_of_pengguna, 'a', newline='', encoding='utf-8') as file_append:  # Open for appending
+        data_pengguna_write = csv.writer(file_write, lineterminator='\n')  # Ensures no extra blank line
+        data_pengguna_append = csv.writer(file_append, lineterminator='\n')  # Ensures no extra blank line
+        
+        header = ['No. Kad Pengenalan', 'Kata Laluan', 'Peranan', 'Status',
+                  'Nama Penuh', 'Agensi', 'Email', 'Jawatan', 'Skim', 'Gred']
+        
+        # Write header to the writing file if it's empty or newly created
+        if file_write.tell() == 0:
+            data_pengguna_write.writerow(header)
+        
+        # Write header to the appending file if it's empty or newly created
+        if file_append.tell() == 0:
+            data_pengguna_append.writerow(header)
+        
+        roles = set_roles(total_users)
+        random.shuffle(roles)  # Shuffle roles to assign randomly
+        
+        for i in range(total_users):
             try:
-                print(f"Waiting for key combination for user: {user_data[4]}")
-                wait_for_f1_key()  # Wait for the specific key combination
+                get_ethnicity = set_ethnicity()
+                get_gender = set_gender()
+                get_ic = generate_kad_pengenalan()
+                get_role = roles[i]  # Assign role from shuffled list
+                get_status = set_status()
+                get_name = generate_name(get_ethnicity, get_gender)[0]
+                get_agency = set_read_list(lists_of_agencies)
+                get_email = f'BIP_{get_name.lower().replace(" ", "_")}{n}@dummyemail.test'
+                n += 1
+                get_position = set_read_list(lists_of_positions)
+                get_scheme = set_read_list(lists_of_schemes)
+                get_grade = set_read_list(lists_of_grades)
                 
-                print("Filling the form...")
-                fill_form(driver, user_data)
-                time.sleep(0.5)  # Optional delay for demonstration
+                while get_ic in set_of_ic:
+                    print(f'IC found in row {i+1} ... regenerating IC number')
+                    get_ic = generate_kad_pengenalan()
+                set_of_ic.add(get_ic)
+                
+                row = [
+                    get_ic, '12345', get_role, get_status,
+                    get_name, get_agency, get_email,
+                    get_position, get_scheme, get_grade
+                ]
+                
+                data_pengguna_write.writerow(row)
+                data_pengguna_append.writerow(row)
+                
             except Exception as e:
-                print(f'An error occurred while filling the form for {user_data[4]}: {e}')
-
-    driver.quit()
-
-if __name__ == "__main__":
-    main()
+                print(f'Error occurred during iteration {i+1}: {e}')
+                continue
+    
+    end_time = time.time()  # End time
+    execution_time = end_time - start_time
+    print(f"Script executed in {execution_time:.2f} seconds")
