@@ -4,20 +4,20 @@ import csv
 import time
 
 # Define file paths
-csv_file_location_old = './script.python/files/generated.pengguna.csv'
-csv_file_location = './script.python/files/new_generated.pengguna.csv'
-malay_names_male_file = './script.python/files/names/malay.male'
-malay_names_female_file = './script.python/files/names/malay.female'
-chinese_names_male_file = './script.python/files/names/chinese.male'
-chinese_names_female_file = './script.python/files/names/chinese.female'
-chinese_surnames_file = './script.python/files/names/chinese.surname'
-indian_names_male_file = './script.python/files/names/indian.male'
-indian_names_female_file = './script.python/files/names/indian.female'
-indian_surnames_file = './script.python/files/names/indian.surname'
-lists_of_agencies = './script.python/files/options/agencies'
-lists_of_positions = './script.python/files/options/positions'
-lists_of_grades = './script.python/files/options/grades'
-lists_of_schemes = './script.python/files/options/schemes'
+csv_file_location = 'files/generated.pengguna.Bahagian_Istiadat_dan_Protokol.csv'
+csv_file_lists_of_pengguna = 'files/generated.pengguna.csv'
+malay_names_male_file = 'files/names/malay.male'
+malay_names_female_file = 'files/names/malay.female'
+chinese_names_male_file = 'files/names/chinese.male'
+chinese_names_female_file = 'files/names/chinese.female'
+chinese_surnames_file = 'files/names/chinese.surname'
+indian_names_male_file = 'files/names/indian.male'
+indian_names_female_file = 'files/names/indian.female'
+indian_surnames_file = 'files/names/indian.surname'
+lists_of_agencies = 'files/options/agencies'
+lists_of_positions = 'files/options/positions'
+lists_of_grades = 'files/options/grades'
+lists_of_schemes = 'files/options/schemes'
 
 def set_read_list(which_lists):
     with open(which_lists, 'r') as file:
@@ -41,7 +41,7 @@ def set_gender():
     return random.choice(['male', 'female'])
 
 def set_ethnicity():
-    return random.choice(['malay', 'chineese', 'indian'])
+    return random.choice(['malay', 'chinese', 'indian'])  # Fixed spelling of 'Chinese'
 
 def read_name_from_file(which_file):
     with open(which_file, 'r') as file:
@@ -58,7 +58,7 @@ def generate_name(ethnicity, gender):
                 first_name = read_name_from_file(malay_names_female_file)
                 onoma = 'binti'
             surname = f'{onoma} {read_name_from_file(malay_names_male_file)}'
-        case 'chineese':
+        case 'chinese':
             if gender == 'male':
                 first_name = read_name_from_file(chinese_names_male_file)
             else:
@@ -72,24 +72,23 @@ def generate_name(ethnicity, gender):
             surname = read_name_from_file(indian_surnames_file)
     return f'{first_name} {surname}', ethnicity, gender
 
-def set_role():
-    roles = ['Pentadbir Agensi', 'Penyelia', 'Super Administrator', 'Staf', 'Ketua Jabatan', 'Setiausaha Tetap', 'Penyelaras Kursus/Pe', 'Ketua Bahagian']
-    weights = {
-    'Pentadbir Agensi': 2,  # 2 per agency
-    'Penyelia': 5,          # 5 per agency
-    'Super Administrator': 0, # Super Administrator, with great power comes great responsibility.
-    'Staf': 20,             # The rest of the staff
-    'Ketua Jabatan': 1,     # 1 per agency
-    'Setiausaha Tetap': 1,  # 1 per agency
-    'Penyelaras Kursus/Pe': 2, # 2 per agency
-    'Ketua Bahagian': 1     # 1 per agency
+def set_roles(total_users):
+    roles = {
+        'Pentadbir Agensi': 1,
+        'Penyelia': 1,
+        'Ketua Jabatan': 1,
+        'Setiausaha Tetap': 1,
+        'Penyelaras Kursus/Pe': 1,
+        'Ketua Bahagian': 1,
+        'Staf': total_users - 6  # Remaining users will be Staf
     }
     
-    weighted_roles = []
-    for role, count in weights.items():
-        weighted_roles.extend([role] * count)
+    assigned_roles = []
+    # Assign fixed roles first
+    for role, count in roles.items():
+        assigned_roles.extend([role] * count)
 
-    return random.choice(weighted_roles)
+    return assigned_roles
 
 def set_status():
     return 'enabled'
@@ -97,23 +96,26 @@ def set_status():
 if __name__ == '__main__':
     start_time = time.time()  # Start time
 
-    n_times = 50
+    total_users = 10  # Total number of users to generate
     n = 1
     set_of_ic = set()
 
     with open(csv_file_location, 'w', newline='', encoding='utf-8') as file:
-        data_pengguna = csv.writer(file, lineterminator='\n')  #  lineterminator Ensures no extra blank line
+        data_pengguna = csv.writer(file, lineterminator='\n')  # Ensures no extra blank line
         data_pengguna.writerow([
             'No. Kad Pengenalan', 'Kata Laluan', 'Peranan', 'Status', 
             'Nama Penuh', 'Agensi', 'Email', 'Jawatan', 'Skim', 'Gred'
         ])
 
-        for i in range(n_times):
+        roles = set_roles(total_users)
+        random.shuffle(roles)  # Shuffle roles to assign randomly
+
+        for i in range(total_users):
             try:
                 get_ethnicity = set_ethnicity()
                 get_gender = set_gender()
                 get_ic = generate_kad_pengenalan()
-                get_role = set_role()
+                get_role = roles[i]  # Assign role from shuffled list
                 get_status = set_status()
                 get_name = generate_name(get_ethnicity, get_gender)[0]
                 get_agency = set_read_list(lists_of_agencies)
