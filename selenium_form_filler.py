@@ -8,10 +8,10 @@ import csv
 from pynput import keyboard  # Import pynput for keyboard input
 
 # Configuration
-USER_INFO_FILE_LOCATION = './script.python/files/new_generated.pengguna.csv'
+USER_INFO_FILE_LOCATION = 'files/generated.pengguna.csv'
 GECKODRIVER_PATH = '/snap/bin/geckodriver'
-LOGIN_URL = 'http://localhost/mtalent/latih/index.php/login/check_login_web'
-FORM_URL = 'http://localhost/mtalent/latih/index.php/admin/register'
+LOGIN_URL = 'http://localhost/mlatih/index.php/login/check_login_web'
+FORM_URL = 'http://localhost/mlatih/index.php/admin/register'
 USERNAME = 'superadmin@test.com'
 PASSWORD = '123456'
 

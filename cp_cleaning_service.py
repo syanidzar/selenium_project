@@ -1,5 +1,5 @@
-read_file_location = './script.python/files/unclean'
-write_file_location = './script.python/files/cleaned'
+read_file_location = 'files/unclean'
+write_file_location = 'files/cleaned'
 
 try:
     # Read the unclean lines from the file
@@ -8,7 +8,7 @@ try:
 
     # Clean the lines to extract option values
 
-    cleaned = [line.split('=')[1].split('<')[0] for line in unclean_lines if '<option' in line and '>' in line]
+    cleaned = [line.split('>')[1].split('<')[0] for line in unclean_lines if '<option' in line and '>' in line]
 
     # cleaned = [line.strip() for line in unclean_lines]
 
