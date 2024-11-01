@@ -9,7 +9,7 @@ import csv
 from pynput import keyboard  # Import pynput for keyboard input
 
 # Configuration
-SUBMIT_FUNCTION = 'RESET'  # option = RESET OR ELSE
+SUBMIT_FUNCTION = 'SUBMIT'  # submit or else reset
 
 USER_INFO_FILE_LOCATION = 'files/generated.pengguna.csv'
 GECKODRIVER_PATH = '/snap/bin/geckodriver'
@@ -120,18 +120,19 @@ def wait_for_f1_key():
     print("F1 key detected, proceeding...")
 
 def submit_form(driver, option):
+    print('Action = submit_form()')
     time.sleep(0.5)  # Optional delay for demonstration
 
     # Submit the form
     if option == 'SUBMIT':
         wait = WebDriverWait(driver, 10)
-        submit_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'btn-blue')))  # for testing purpose
+        submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'btn bg-blue') and contains(text(), 'Daftar')]")))
         submit_button.click()
 
     # reset the form for testing purposes
     else:
         wait = WebDriverWait(driver, 10)
-        reset_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'btn-light')))  # for testing purpose
+        reset_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'btn bg-light') and contains(text(), 'Reset')]")))
         reset_button.click()
 
     
