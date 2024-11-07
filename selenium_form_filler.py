@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import csv
-from pynput import keyboard  # Import pynput for keyboard input
+from pynput import keyboard
 
 # Configuration
 SUBMIT_FUNCTION = 'SUBMIT'  # submit or else reset
@@ -74,7 +74,7 @@ def fill_form(driver, user_data):
     wait = WebDriverWait(driver, 10)
 
     try:
-        # Fill in text fields
+        # Look and wait for  fields
         fill_ic = wait.until(EC.presence_of_element_located((By.NAME, 'user_username')))
         fill_password = wait.until(EC.presence_of_element_located((By.NAME, 'user_password')))
         fill_repassword = wait.until(EC.presence_of_element_located((By.NAME, 'user_repassword')))
@@ -82,7 +82,7 @@ def fill_form(driver, user_data):
         fill_email = wait.until(EC.presence_of_element_located((By.NAME, 'user_profile_email')))
         fill_jawatan = wait.until(EC.presence_of_element_located((By.NAME, 'user_profile_jawatan')))
         fill_role = wait.until(EC.presence_of_element_located((By.NAME, 'user_cizacl_role_id')))
-        # Fill in remaining fields
+        # Fill in fields
         fill_ic.send_keys(user_data[0])
         fill_password.send_keys(user_data[1])
         fill_repassword.send_keys(user_data[1])
