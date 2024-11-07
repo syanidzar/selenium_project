@@ -4,7 +4,7 @@ import csv
 import time
 
 # Define file paths
-csv_file_location = 'files/generated.pengguna.Bahagian_Istiadat_dan_Protokol.csv'
+csv_file_location = 'files/generated.pengguna.Institut_Latihan_Sektor_Awam_Negeri.csv'
 csv_file_lists_of_pengguna = 'files/generated.pengguna.csv'
 malay_names_male_file = 'files/names/malay.male'
 malay_names_female_file = 'files/names/malay.female'
@@ -91,11 +91,18 @@ def set_roles(total_users):
 def set_status():
     return 'enabled'
 
-if __name__ == '__main__':
-    start_time = time.time()  # Start time
-    total_users = 10  # Total number of users to generate
+def list_of_ic():
+    list_of_ic = set()
+    with open(csv_file_lists_of_pengguna, 'r') as file:
+        csv_row = csv.reader(file)
+        next(csv_row)  # Skip header row
+        for col in csv_row:
+            list_of_ic.add(col[0])
+    return list_of_ic
+
+def main():
     n = 1
-    set_of_ic = set()
+    set_of_ic = set(list_of_ic())
     
     with open(csv_file_location, 'w', newline='', encoding='utf-8') as file_write, \
          open(csv_file_lists_of_pengguna, 'a', newline='', encoding='utf-8') as file_append:  # Open for appending
@@ -125,7 +132,7 @@ if __name__ == '__main__':
                 get_status = set_status()
                 get_name = generate_name(get_ethnicity, get_gender)[0]
                 get_agency = set_read_list(lists_of_agencies)
-                get_email = f'BIP_{get_name.lower().replace(" ", "_")}{n}@dummyemail.test'
+                get_email = f'{get_name.lower().replace(" ", "_")}{n}@dummyemail.test'
                 n += 1
                 get_position = set_read_list(lists_of_positions)
                 get_scheme = set_read_list(lists_of_schemes)
@@ -148,7 +155,11 @@ if __name__ == '__main__':
             except Exception as e:
                 print(f'Error occurred during iteration {i+1}: {e}')
                 continue
-    
+
+if __name__ == '__main__':
+    start_time = time.time()  # Start time
+    total_users = 10  # Total number of users to generate
+    main()    
     end_time = time.time()  # End time
     execution_time = end_time - start_time
     print(f"Script executed in {execution_time:.2f} seconds")
