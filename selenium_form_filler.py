@@ -11,8 +11,8 @@ from pynput import keyboard
 # Configuration
 SUBMIT_FUNCTION = 'SUBMIT'  # submit or else reset
 
-USER_INFO_FILE_LOCATION = 'files/generated.pengguna.Institut_Latihan_Sektor_Awam_Negeri.csv'
-GECKODRIVER_PATH = '/snap/bin/geckodriver'
+USER_INFO_FILE_LOCATION = 'files\generated.pengguna.csv'
+EDGE_DRIVER_PATH = '.browser_driver\msedgedriver.exe'
 LOGIN_URL = 'http://localhost/mlatih/index.php/login/check_login_web'
 FORM_URL = 'http://localhost/mlatih/index.php/admin/register'
 USERNAME = 'superadmin@test.com'
@@ -20,8 +20,8 @@ PASSWORD = '123456'
 
 # Initialize the WebDriver
 def init_driver():
-    driver_service = webdriver.FirefoxService(executable_path=GECKODRIVER_PATH)
-    return webdriver.Firefox(service=driver_service)
+    driver_service = webdriver.EdgeService(executable_path=EDGE_DRIVER_PATH)
+    return webdriver.Edge(service=driver_service)
 
 # Login function
 def login(driver):
@@ -102,12 +102,12 @@ def fill_form(driver, user_data):
 
 # Function to wait for key combination
 def wait_for_f1_key():
-    print("Press 'F1' to fill the next form...")
+    print("Press 'F2' to fill the next form...")
     
     # Function to detect F1 key press
     def on_press(key):
         try:
-            if key == keyboard.Key.f1:  # Check if the pressed key is F1
+            if key == keyboard.Key.f2:  # Check if the pressed key is F1
                 print("F1 key pressed!")  # Confirm key press
                 return False  # Stop listener
         except AttributeError:
@@ -135,7 +135,6 @@ def submit_form(driver, option):
         reset_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'btn bg-light') and contains(text(), 'Reset')]")))
         reset_button.click()
 
-    
     time.sleep(0.5)  # Optional delay for demonstration
 
 # Main execution flow
@@ -146,8 +145,6 @@ def main():
     with open(USER_INFO_FILE_LOCATION, 'r') as file:
         rows = csv.reader(file)
         next(rows)  # Skip header
-
-        # driver.get(FORM_URL)
 
         for user_data in rows:
             try:
