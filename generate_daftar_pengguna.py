@@ -41,7 +41,9 @@ def set_gender():
     return random.choice(['male', 'female'])
 
 def set_ethnicity():
-    return random.choice(['malay', 'chinese', 'indian'])
+    ethnicities = ['malay', 'chinese', 'indian']
+    weights = [0.6, 0.3, 0.1]  # Adjust these weights as needed
+    return random.choices(ethnicities, weights)[0]
 
 def read_name_from_file(which_file):
     with open(which_file, 'r') as file:
