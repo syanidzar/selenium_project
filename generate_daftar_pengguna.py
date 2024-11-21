@@ -1,10 +1,10 @@
 import random
 from datetime import datetime, timedelta
+from pathlib import Path
 import csv
 import time
 
 # Define file paths
-csv_file_location = 'files/generated.pengguna.Institut_Latihan_Sektor_Awam_Negeri.csv'
 csv_file_lists_of_pengguna = 'files/generated.pengguna.csv'
 malay_names_male_file = 'files/names/malay.male'
 malay_names_female_file = 'files/names/malay.female'
@@ -91,23 +91,27 @@ def set_roles(total_users):
 def set_status():
     return 'enabled'
 
+def check_and_create_file(file_path):
+    file_path_check = Path(file_path)
+    file_path_check.touch(exist_ok=True)  # Ensure the file is created if it doesn't exist
+    return file_path_check
+
 def list_of_ic():
+    file_path_check = check_and_create_file(csv_file_lists_of_pengguna)
     list_of_ic = set()
-    with open(csv_file_lists_of_pengguna, 'r') as file:
-        csv_row = csv.reader(file)
-        next(csv_row)  # Skip header row
-        for col in csv_row:
-            list_of_ic.add(col[0])
+    if file_path_check.is_file():
+        with open(csv_file_lists_of_pengguna, 'r') as file:
+            csv_row = csv.reader(file)
+            next(csv_row, None)  # Skip header row if it exists
+            for col in csv_row:
+                list_of_ic.add(col[0])
     return list_of_ic
 
 def main():
     n = 1
-    set_of_ic = set(list_of_ic())
     
-    with open(csv_file_location, 'w', newline='', encoding='utf-8') as file_write, \
-         open(csv_file_lists_of_pengguna, 'a', newline='', encoding='utf-8') as file_append:  # Open for appending
+    with open(csv_file_lists_of_pengguna, 'w', newline='', encoding='utf-8') as file_write:
         data_pengguna_write = csv.writer(file_write, lineterminator='\n')  # Ensures no extra blank line
-        data_pengguna_append = csv.writer(file_append, lineterminator='\n')  # Ensures no extra blank line
         
         header = ['No. Kad Pengenalan', 'Kata Laluan', 'Peranan', 'Status',
                   'Nama Penuh', 'Agensi', 'Email', 'Jawatan', 'Skim', 'Gred']
@@ -115,14 +119,11 @@ def main():
         # Write header to the writing file if it's empty or newly created
         if file_write.tell() == 0:
             data_pengguna_write.writerow(header)
-        
-        # Write header to the appending file if it's empty or newly created
-        if file_append.tell() == 0:
-            data_pengguna_append.writerow(header)
-        
+                
         roles = set_roles(total_users)
         random.shuffle(roles)  # Shuffle roles to assign randomly
         
+        set_of_ic = set(list_of_ic())
         for i in range(total_users):
             try:
                 get_ethnicity = set_ethnicity()
@@ -144,13 +145,12 @@ def main():
                 set_of_ic.add(get_ic)
                 
                 row = [
-                    get_ic, '12345', get_role, get_status,
+                    get_ic, '123456', get_role, get_status,
                     get_name, get_agency, get_email,
                     get_position, get_scheme, get_grade
                 ]
                 
                 data_pengguna_write.writerow(row)
-                data_pengguna_append.writerow(row)
                 
             except Exception as e:
                 print(f'Error occurred during iteration {i+1}: {e}')
@@ -158,7 +158,7 @@ def main():
 
 if __name__ == '__main__':
     start_time = time.time()  # Start time
-    total_users = 10  # Total number of users to generate
+    total_users = int(input('How many users to generate: '))  # Total number of users to generate
     main()    
     end_time = time.time()  # End time
     execution_time = end_time - start_time
