@@ -46,9 +46,16 @@ def set_ethnicity():
     return random.choices(ethnicities, weights)[0]
 
 def read_name_from_file(which_file):
-    with open(which_file, 'r') as file:
-        lines = file.readlines()
-        return random.choice(lines).strip()
+    try:
+        with open(which_file, 'r') as file:
+            lines = file.readlines()
+            if not lines:
+                raise ValueError(f'The file {which_file} is empty')
+            return random.choice(lines).strip()
+    except FileNotFoundError:
+        raise FileNotFoundError(f'The file {which_file} was not found')
+    except Exception as e:
+        raise Exception(f'Error reading {which_file}: {e}')
 
 def generate_name(ethnicity, gender):
     match ethnicity:
@@ -94,6 +101,9 @@ def set_status():
     return 'enabled'
 
 def check_and_create_file(file_path):
+    directory = Path(file_path).parent 
+    directory.mkdir(parents=True, exist_ok=True)  # Create directory if it doesn't exist
+
     file_path_check = Path(file_path)
     file_path_check.touch(exist_ok=True)  # Ensure the file is created if it doesn't exist
     return file_path_check
