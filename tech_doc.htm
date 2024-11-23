@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Data Generator and Form Filler Documentation</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            color: #333;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        header {
+            background: #50b3a2;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #ccc 1px solid;
+        }
+
+        header a,
+        header h1 {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            margin: 0 20px;
+        }
+
+        header h1 {
+            display: inline;
+        }
+
+        .content img {
+            width: 100%;
+            height: auto;
+        }
+
+        .content h2 {
+            background-color: #50b3a2;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .content p,
+        .content ul {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>User Data Generator and Form Filler Documentation</h1>
+        </div>
+    </header>
+    <div class="container content">
+        <h2>Introduction</h2>
+        <p>
+            This technical document outlines the processes, design, and functionalities of the User Data Generator and Form Filler scripts. The project aims to generate randomized user data for testing purposes and automate the filling and submission of web forms
+            using Selenium WebDriver.
+        </p>
+        <h2>System Overview</h2>
+        <h3>Components</h3>
+        <ul>
+            <li><strong>User Data Generator (`generate_daftar_pengguna.py`)</strong>: Generates randomized user data and saves it to a CSV file.</li>
+            <li><strong>Form Filler (`form_filler.py`)</strong>: Automates the process of filling out and submitting web forms using the generated data.</li>
+        </ul>
+
+        <h3>Prerequisites</h3>
+        <ul>
+            <li>Python 3.x</li>
+            <li>Selenium WebDriver for Edge</li>
+            <li>Required Python packages: `selenium`, `pynput`, `unittest`</li>
+            <li>Microsoft Edge browser</li>
+        </ul>
+
+        <h2>User Data Generator</h2>
+        <h3>Description</h3>
+        <p>
+            The script generates user data such as IC numbers, names, genders, ethnicities, and other attributes. It saves the data in a CSV file for later use in automated form filling.
+        </p>
+
+        <h3>Workflow</h3>
+        <ol>
+            <li><strong>Initialization</strong>: Reads configuration files for names and other attributes. Sets up lists for different types of data (e.g., Malay male names, Chinese surnames, etc.).</li>
+            <li><strong>Random Data Generation</strong>:
+                <ul>
+                    <li><strong>Date of Birth</strong>: Generates a random date of birth within a specific range.</li>
+                    <li><strong>IC Number</strong>: Combines the generated date of birth with random numbers to create a unique IC number.</li>
+                    <li><strong>Gender and Ethnicity</strong>: Randomly selects gender and ethnicity using predefined probabilities.</li>
+                    <li><strong>Name</strong>: Constructs full names based on the selected ethnicity and gender.</li>
+                </ul>
+            </li>
+            <li><strong>Data Compilation</strong>: Assigns roles to users. Ensures each generated IC number is unique. Compiles user data into a row for the CSV file.</li>
+            <li><strong>Writing to CSV</strong>: Writes the header and user data to the specified CSV file.</li>
+        </ol>
+
+        <h3>Key Functions</h3>
+        <ul>
+            <li>`generate_random_dob()`: Generates a random date of birth.</li>
+            <li>`generate_kad_pengenalan()`: Generates a unique IC number.</li>
+            <li>`set_gender()`: Randomly selects gender.</li>
+            <li>`set_ethnicity()`: Randomly selects ethnicity.</li>
+            <li>`read_name_from_file(which_file)`: Reads a name from the specified file.</li>
+            <li>`generate_name(ethnicity, gender)`: Generates a full name based on ethnicity and gender.</li>
+            <li>`set_roles(total_users)`: Assigns roles to users.</li>
+            <li>`check_and_create_file(file_path)`: Ensures the specified file exists and creates it if necessary.</li>
+            <li>`list_of_ic()`: Retrieves existing IC numbers from the CSV file to avoid duplicates.</li>
+        </ul>
+
+        <h3>Usage</h3>
+        <p>Run the script to generate user data:</p>
+        <pre><code>python generate_daftar_pengguna.py</code></pre>
+
+        <h2>Form Filler</h2>
+        <h3>Description</h3>
+        <p>
+            The script logs into a web application and fills out a registration form using the generated user data. It uses Selenium WebDriver to automate browser interactions.
+        </p>
+
+        <h3>Workflow</h3>
+        <ol>
+            <li><strong>Driver Initialization</strong>: Initializes the Edge WebDriver.</li>
+            <li><strong>Login</strong>: Opens the login page. Inputs username and password. Clicks the login button to authenticate.</li>
+            <li><strong>Form Filling</strong>: Navigates to the registration form page. Waits for user input (F2 key press) before filling each form. Fills form fields with user data from the CSV file. Handles Select2 dropdowns for specific fields.</li>
+            <li><strong>Form Submission</strong>: Submits or resets the form based on the specified action.</li>
+        </ol>
+
+        <h3>Key Functions</h3>
+        <ul>
+            <li>`init_driver()`: Initializes the WebDriver.</li>
+            <li>`login(driver)`: Performs login to the web application.</li>
+            <li>`select2_form_filler(wait_t, driver_t, user_data_obj, field_name, obj_object)`: Fills Select2 dropdown fields.</li>
+            <li>`fill_form(driver, user_data)`: Fills the form with user data.</li>
+            <li>`wait_for_f1_key()`: Waits for the F2 key press to proceed.</li>
+            <li>`submit_form(driver, option)`: Submits or resets the form.</li>
+        </ul>
+
+        <h3>Usage</h3>
+        <p>Update the constants in the script and run it:</p>
+        <pre><code>python form_filler.py</code></pre>
+
+        <h2>Unit Tests</h2>
+        <p>Unit tests for the user data generator are provided in `test_generate_daftar_pengguna.py`. The tests cover various functions to ensure they work correctly.</p>
+
+        <h3>Running the Tests</h3>
+        <p>Run the unit tests:</p>
+        <pre><code>python -m unittest test_generate_daftar_pengguna.py</code></pre>
+
+        <h2>Conclusion</h2>
+        <p>
+            This documentation provides an overview of the User Data Generator and Form Filler scripts, detailing their workflows, key functions, and usage instructions. For further questions or contributions, please contact [Your Name] at [Your Email].
+        </p>
+    </div>
+</body>
+
+</html>
