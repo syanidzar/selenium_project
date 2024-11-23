@@ -148,3 +148,47 @@ def main():
         roles = set_roles(total_users)  # Generate a list of roles for the users
         random.shuffle(roles)  # Shuffle the roles to assign them randomly
         
+        set_of_ic = set(list_of_ic())  # Read existing IC numbers to avoid duplicates
+        for i in range(total_users):
+            try:
+                # Generate random user attributes
+                get_ethnicity = set_ethnicity()
+                get_gender = set_gender()
+                get_ic = generate_kad_pengenalan()
+                get_role = roles[i]  # Get the role from the shuffled list
+                get_status = set_status()  # Set the user status
+                get_name = generate_name(get_ethnicity, get_gender)[0]  # Generate full name
+                get_agency = set_read_list(lists_of_agencies)  # Get a random agency
+                get_email = f'{get_name.lower().replace(" ", "_")}{n}@dummyemail.test'  # Generate email address
+                n += 1
+                get_position = set_read_list(lists_of_positions)  # Get a random job position
+                get_scheme = set_read_list(lists_of_schemes)  # Get a random scheme
+                get_grade = set_read_list(lists_of_grades)  # Get a random grade
+                
+                # Check if IC number already exists and regenerate if necessary
+                while get_ic in set_of_ic:
+                    print(f'IC found in row {i+1} ... regenerating IC number')
+                    get_ic = generate_kad_pengenalan()
+                set_of_ic.add(get_ic)  # Add IC number to the set of used ICs
+                
+                # Prepare the row for CSV file
+                row = [
+                    get_ic, '123456', get_role, get_status,
+                    get_name, get_agency, get_email,
+                    get_position, get_scheme, get_grade
+                ]
+                
+                data_pengguna_write.writerow(row)  # Write the row to the CSV
+                
+            except Exception as e:
+                print(f'Error occurred during iteration {i+1}: {e}')  # Handle errors during user generation
+                continue
+
+# Entry point for the script
+if __name__ == '__main__':
+    start_time = time.time()  # Start time for performance tracking
+    total_users = int(input('How many users to generate: '))  # Ask user for the total number of users to generate
+    main()  # Call the main function to start the user generation process    
+    end_time = time.time()  # End time for performance tracking
+    execution_time = end_time - start_time  # Calculate execution time
+    print(f"Script executed in {execution_time:.2f} seconds")  # Print execution time
