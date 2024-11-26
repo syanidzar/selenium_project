@@ -72,8 +72,8 @@ class TestUserGenerator(unittest.TestCase):
         
         # Ensure the list of roles contains 10 roles
         self.assertEqual(len(roles), 10)
-        # Check that 'Pentadbir Agensi' and 'Staf' are present in the roles
-        self.assertIn('Pentadbir Agensi', roles)
+        # Check that 'Pentadbir System' and 'Staf' are present in the roles
+        self.assertIn('Pentadbir System', roles)
         self.assertIn('Staf', roles)
 
     # Test for the check_and_create_file function, ensuring the file is created correctly

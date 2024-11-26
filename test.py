@@ -74,7 +74,7 @@ def generate_name(ethnicity, gender):
 
 def set_roles(total_users):
     roles = {
-        'Pentadbir Agensi': 1,
+        'Pentadbir System': 1,
         'Penyelia': 1,
         'Ketua Jabatan': 1,
         'Setiausaha Tetap': 1,

@@ -1,5 +1,5 @@
 role_mapping = {
-    'Pentadbir Agensi': '5',
+    'Pentadbir System': '5',
     'Super Administrator': '6',
     'Test Staf': '12',
     'Staf': '13',
