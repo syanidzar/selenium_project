@@ -92,7 +92,7 @@ def generate_name(ethnicity, gender):
 # Function to set roles for the users based on a given total number of users
 def set_roles(total_users):
     roles = {
-        'Pentadbir Agensi': 1,
+        'Pentadbir System': 1,
         'Penyelia': 1,
         'Ketua Jabatan': 1,
         'Setiausaha Tetap': 1,
