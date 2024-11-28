@@ -181,6 +181,8 @@ def main():
         with open(lists_of_grades, 'r') as file:
             grades_list = file.readlines()
         
+        rows = []  # List to store all rows before sorting
+        
         for i in range(total_users):
             try:
                 # Generate random user attributes
@@ -209,12 +211,30 @@ def main():
                     get_position, get_scheme, get_grade_value
                 ]
                 
-                data_pengguna_write.writerow(row)  # Write the row to the main CSV
-                data_pengguna_append.writerow(row)  # Append the row to the append CSV
+                rows.append(row)  # Add the row to the list
                 
             except Exception as e:
                 print(f'Error occurred during iteration {i+1}: {e}')  # Handle errors during user generation
                 continue
+        
+        # Define role priority for sorting
+        role_priority = {
+            'Ketua Jabatan': 1,
+            'Ketua Bahagian': 2,
+            'Setiausaha Tetap': 3,
+            'Pentadbir System': 4,
+            'Penyelaras Kursus/Pe': 5,
+            'Penyelia': 6,
+            'Staf': 7
+        }
+        
+        # Sort the rows by role priority
+        rows.sort(key=lambda x: role_priority[x[2]])
+        
+        # Write the sorted rows to the CSV files
+        for row in rows:
+            data_pengguna_write.writerow(row)  # Write the row to the main CSV
+            data_pengguna_append.writerow(row)  # Append the row to the append CSV
 
 # Entry point for the script
 if __name__ == '__main__':
