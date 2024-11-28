@@ -125,6 +125,29 @@ def list_of_ic():
                 ic_set.add(row[0])
     return ic_set
 
+# Function to get a grade based on the user role
+def get_grade(role, lists_of_grades):
+    role_grade_ranges = {
+        'Pentadbir System': (32, 41),
+        'Penyelia': (22, 32),
+        'Ketua Jabatan': (54, 99),
+        'Setiausaha Tetap': (32, 41),
+        'Penyelaras Kursus/Pe': (41, 52),
+        'Ketua Bahagian': (52, 56),
+        'Staf': (1, 29)
+    }
+    
+    if role not in role_grade_ranges:
+        raise ValueError(f"Role {role} is not recognized.")
+    
+    min_grade, max_grade = role_grade_ranges[role]
+    valid_grades = [int(grade.strip()) for grade in lists_of_grades if min_grade <= int(grade.strip()) <= max_grade]
+    
+    if not valid_grades:
+        raise ValueError(f"No valid grades found for role {role} within the range {min_grade}-{max_grade}.")
+    
+    return random.choice(valid_grades)
+
 # Main function that generates the user data and writes it to the CSV file
 def main():
     n = 1  # Initialize a counter for the email suffix
@@ -153,6 +176,11 @@ def main():
         random.shuffle(roles)  # Shuffle the roles to assign them randomly
         
         set_of_ic = set(list_of_ic())  # Read existing IC numbers to avoid duplicates
+        
+        # Read the list of grades from the file
+        with open(lists_of_grades, 'r') as file:
+            grades_list = file.readlines()
+        
         for i in range(total_users):
             try:
                 # Generate random user attributes
@@ -166,7 +194,7 @@ def main():
                 n += 1
                 get_position = set_read_list(lists_of_positions)  # Get a random job position
                 get_scheme = set_read_list(lists_of_schemes)  # Get a random scheme
-                get_grade = set_read_list(lists_of_grades)  # Get a random grade
+                get_grade_value = get_grade(get_role, grades_list)  # Get a grade based on the role
                 
                 # Check if IC number already exists and regenerate if necessary
                 while get_ic in set_of_ic:
@@ -178,7 +206,7 @@ def main():
                 row = [
                     get_ic, '123456', get_role, get_status,
                     get_name, chosen_agency, get_email,
-                    get_position, get_scheme, get_grade
+                    get_position, get_scheme, get_grade_value
                 ]
                 
                 data_pengguna_write.writerow(row)  # Write the row to the main CSV
