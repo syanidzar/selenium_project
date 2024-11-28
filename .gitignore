@@ -51,6 +51,7 @@ coverage.xml
 .pytest_cache/
 cover/
 web_forms/
+test.py
 
 # Translations
 *.mo
