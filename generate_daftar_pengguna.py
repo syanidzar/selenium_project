@@ -121,7 +121,7 @@ def check_and_create_file(file_path):
 
 # Function to read and return a set of existing IC numbers from the CSV file
 def list_of_ic():
-    file_path_check = check_and_create_file(csv_file_lists_of_pengguna)  # Ensure the file exists
+    file_path_check = check_and_create_file(csv_file_lists_of_pengguna_append)  # Ensure the file exists
     list_of_ic = set()  # Create an empty set to store IC numbers
     if file_path_check.is_file():  # Check if the file exists
         with open(csv_file_lists_of_pengguna, 'r') as file:
