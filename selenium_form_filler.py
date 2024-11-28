@@ -9,7 +9,7 @@ from pynput import keyboard
 # Configuration
 SUBMIT_FUNCTION = 'SUBMIT'  # submit or else reset
 
-USER_INFO_FILE_LOCATION = 'files\generated.pengguna.csv'
+USER_INFO_FILE_LOCATION = 'files\generated.pengguna.temp.csv'
 EDGE_DRIVER_PATH = '.browser_driver\msedgedriver.exe'
 LOGIN_URL = 'http://localhost/mlatih/index.php/login/check_login_web'
 FORM_URL = 'http://localhost/mlatih/index.php/admin/register'
