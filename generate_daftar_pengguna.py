@@ -6,7 +6,8 @@ import csv  # For working with CSV files
 import time  # For measuring execution time
 
 # Define file paths for required files
-csv_file_lists_of_pengguna = 'files/generated.pengguna.csv'  # The path to the CSV file for storing user data
+csv_file_lists_of_pengguna = 'files/generated.pengguna.temp.csv'  # The path to the CSV file for storing user data
+csv_file_lists_of_pengguna_append = 'files/generated.pengguna.csv'  # Appending user data in this file
 malay_names_male_file = 'files/names/malay.male'  # Path to file containing male Malay first names
 malay_names_female_file = 'files/names/malay.female'  # Path to file containing female Malay first names
 chinese_names_male_file = 'files/names/chinese.male'  # Path to file containing male Chinese first names
@@ -134,16 +135,25 @@ def list_of_ic():
 def main():
     n = 1  # Initialize a counter for the email suffix
     
-    # Open the CSV file for writing user data
-    with open(csv_file_lists_of_pengguna, 'w', newline='', encoding='utf-8') as file_write:
+    # Check if the append file already exists and has content
+    append_file_exists = Path(csv_file_lists_of_pengguna_append).is_file() and Path(csv_file_lists_of_pengguna_append).stat().st_size > 0
+    
+    # Open the CSV files for writing and appending user data
+    with open(csv_file_lists_of_pengguna, 'w', newline='', encoding='utf-8') as file_write, \
+         open(csv_file_lists_of_pengguna_append, 'a', newline='', encoding='utf-8') as file_append:
+        
         data_pengguna_write = csv.writer(file_write, lineterminator='\n')  # Prepare to write to CSV
+        data_pengguna_append = csv.writer(file_append, lineterminator='\n')  # Prepare to append to CSV
         
         header = ['No. Kad Pengenalan', 'Kata Laluan', 'Peranan', 'Status',  # Define the CSV header
                   'Nama Penuh', 'Agensi', 'Email', 'Jawatan', 'Skim', 'Gred']
         
-        # Write header to the file if it's empty or newly created
-        if file_write.tell() == 0:
-            data_pengguna_write.writerow(header)
+        # Write header to the main file
+        data_pengguna_write.writerow(header)
+        
+        # Write header to the append file if it's empty or newly created
+        if not append_file_exists:
+            data_pengguna_append.writerow(header)
         
         roles = set_roles(total_users)  # Generate a list of roles for the users
         random.shuffle(roles)  # Shuffle the roles to assign them randomly
@@ -178,7 +188,8 @@ def main():
                     get_position, get_scheme, get_grade
                 ]
                 
-                data_pengguna_write.writerow(row)  # Write the row to the CSV
+                data_pengguna_write.writerow(row)  # Write the row to the main CSV
+                data_pengguna_append.writerow(row)  # Append the row to the append CSV
                 
             except Exception as e:
                 print(f'Error occurred during iteration {i+1}: {e}')  # Handle errors during user generation
