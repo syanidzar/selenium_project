@@ -195,8 +195,13 @@ def main():
                 get_email = f'{get_name.lower().replace(" ", "_")}{n}@dummyemail.test'  # Generate email address
                 n += 1
                 get_position = set_read_list(lists_of_positions)  # Get a random job position
-                get_scheme = set_read_list(lists_of_schemes)  # Get a random scheme
-                get_grade_value = get_grade(get_role, grades_list)  # Get a grade based on the role
+
+                if get_role == 'Ketua Jabatan':
+                    get_scheme = 'JUSA'  # Set the scheme for Ketua Jabatan
+                    get_grade_value = 99
+                else:
+                    get_scheme = set_read_list(lists_of_schemes)  # Get a random scheme
+                    get_grade_value = get_grade(get_role, grades_list)  # Get a grade based on the role
                 
                 # Check if IC number already exists and regenerate if necessary
                 while get_ic in set_of_ic:
