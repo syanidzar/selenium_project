@@ -90,6 +90,7 @@ def generate_name(ethnicity, gender):
 def set_roles(total_users):
     roles = {
         'Pentadbir System': 1,
+        'Super Administrator': 1,
         'Penyelia': 1,
         'Ketua Jabatan': 1,
         'Setiausaha Tetap': 1,
@@ -129,6 +130,7 @@ def list_of_ic():
 def get_grade(role, lists_of_grades):
     role_grade_ranges = {
         'Pentadbir System': (32, 41),
+        'Super Administrator': (32, 52),
         'Penyelia': (22, 32),
         'Ketua Jabatan': (54, 99),
         'Setiausaha Tetap': (32, 41),
@@ -230,7 +232,8 @@ def main():
             'Pentadbir System': 4,
             'Penyelaras Kursus/Pe': 5,
             'Penyelia': 6,
-            'Staf': 7
+            'Staf': 7,
+            'Super Administrator': 8
         }
         
         # Sort the rows by role priority
@@ -243,7 +246,6 @@ def main():
 
 # Entry point for the script
 if __name__ == '__main__':
-    start_time = time.time()  # Start time for performance tracking
     total_users = int(input('How many users to generate: '))  # Ask user for the total number of users to generate
     
     # Ask user to choose an agency
@@ -253,7 +255,8 @@ if __name__ == '__main__':
             print(f"{idx}. {agency.strip()}")
         agency_choice = int(input('Choose an agency by number: '))
         chosen_agency = agencies[agency_choice - 1].strip()
-    
+
+    start_time = time.time()  # Start time for performance tracking
     main()  # Call the main function to start the user generation process    
     end_time = time.time()  # End time for performance tracking
     execution_time = end_time - start_time  # Calculate execution time
